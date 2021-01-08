@@ -23,4 +23,9 @@ class University extends Model
     protected $attributes = [
         'domains' => '{}'
     ];
+
+    public function expired()
+    {
+        return now()->greaterThanOrEqualTo($this->updated_at->addMinutes($this->ttl));
+    }
 }
