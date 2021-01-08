@@ -22,6 +22,8 @@ class CreateUniversitiesTable extends Migration
             $table->string('name');
             $table->json('domains');
             $table->tinyInteger('ttl', false, true);
+
+            $table->timestamps();
         });
     }
 

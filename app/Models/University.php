@@ -10,8 +10,6 @@ class University extends Model
 {
     use HasFactory;
 
-    public $timestamps = false;
-
     protected $casts = [
         'domains' => 'array',
     ];

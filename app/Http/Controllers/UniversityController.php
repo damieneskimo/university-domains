@@ -10,31 +10,38 @@ class UniversityController extends Controller
 {
     public function index(Request $request)
     {
-        $sourceApi = 'http://universities.hipolabsfasfd.com/search?country=';
+        $sourceApi = 'http://universities.hipolabs.com/search?country=';
 
         if ($request->filled('country')) {
-            $client = new Client;
+            $universities = University::where('country', $request->country)->get();
 
-            try {
-                $res = $client->request('get', $sourceApi . $request->country);
-                $data = json_decode($res->getBody()->getContents());
+            if ($universities->isEmpty()) {
+                try {
+                    $client = new Client;
+                    $res = $client->request('get', $sourceApi . $request->country);
+                    $data = json_decode($res->getBody()->getContents());
 
-                foreach ($data as $university) {
-                    University::updateOrCreate(
-                        ['country' => $university->country, 'name' => $university->name],
-                        [
-                            'alpha_two_code' => $university->alpha_two_code,
-                            'state_province' => $university->{'state-province'},
-                            'domains' => $university->domains,
-                            'ttl' => rand(5, 15)
-                        ]
-                    );
+                    foreach ($data as $university) {
+                        University::updateOrCreate(
+                            ['country' => $university->country, 'name' => $university->name],
+                            [
+                                'alpha_two_code' => $university->alpha_two_code,
+                                'state_province' => $university->{'state-province'},
+                                'domains' => $university->domains,
+                                'ttl' => rand(5, 15)
+                            ]
+                        );
+                    }
+
+                    $universities = $data;
+                } catch (\Throwable $th) {
+                    return response()->json([
+                        'message' => 'Whoops! Something went wrong when retrieving data!'
+                    ], 503);
                 }
-            } catch (\Throwable $th) {
-                //throw $th;
             }
 
-            dd($data);
+            return $universities;
         } else {
             return response()->json([
                 'message' => 'Please choose a country first!'
