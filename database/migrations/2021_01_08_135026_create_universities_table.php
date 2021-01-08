@@ -20,6 +20,7 @@ class CreateUniversitiesTable extends Migration
             $table->string('country');
             $table->string('state_province')->nullable();
             $table->string('name');
+            $table->json('domains');
             $table->tinyInteger('ttl', false, true);
         });
     }
