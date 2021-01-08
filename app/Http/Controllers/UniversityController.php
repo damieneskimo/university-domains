@@ -10,15 +10,14 @@ class UniversityController extends Controller
 {
     public function index(Request $request)
     {
-        $sourceApi = 'http://universities.hipolabs.com/search?country=';
-
         if ($request->filled('country')) {
             $universities = University::where('country', $request->country)->get();
 
             if ($universities->isEmpty()) {
                 try {
                     $client = new Client;
-                    $res = $client->request('get', $sourceApi . $request->country);
+                    $uri = University::SOURCE_API . 'country=' . $request->country;
+                    $res = $client->request('get', $uri);
                     $data = json_decode($res->getBody()->getContents());
 
                     foreach ($data as $university) {

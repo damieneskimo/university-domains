@@ -10,6 +10,8 @@ class University extends Model
 {
     use HasFactory;
 
+    const SOURCE_API = 'http://universities.hipolabs.com/search?';
+
     protected $casts = [
         'domains' => 'array',
     ];
