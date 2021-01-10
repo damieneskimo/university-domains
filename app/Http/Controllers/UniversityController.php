@@ -8,20 +8,8 @@ use Illuminate\Http\Request;
 
 class UniversityController extends Controller
 {
-    public function search(Request $request)
+    public function index(Request $request)
     {
-        if ($request->filled(['name', 'country'])) {
-            $university = University::where('country', $request->country)->where('name', $request->name)->first();
-
-            if (! is_null($university)) {
-                return $university;
-            } else {
-                return response()->json([
-                    'message' => 'Sorry! University not found!'
-                ], 500);
-            }
-        }
-
         if ($request->filled('country')) {
             $universities = University::where('country', $request->country)->get();
 
@@ -64,5 +52,10 @@ class UniversityController extends Controller
                 'message' => 'Please choose a country first!'
             ], 400);
         }
+    }
+
+    public function show(University $university, Request $request)
+    {
+        return $university;
     }
 }
