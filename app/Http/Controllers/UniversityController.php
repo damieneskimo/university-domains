@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\UniversityResource;
 use App\Models\University;
 use GuzzleHttp\Client;
 use Illuminate\Http\Request;
@@ -46,7 +47,7 @@ class UniversityController extends Controller
                 }
             }
 
-            return $universities;
+            return UniversityResource::collection($universities);
         } else {
             return response()->json([
                 'message' => 'Please choose a country first!'
@@ -56,6 +57,6 @@ class UniversityController extends Controller
 
     public function show(University $university, Request $request)
     {
-        return $university;
+        return new UniversityResource($university);
     }
 }
