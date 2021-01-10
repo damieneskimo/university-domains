@@ -24,7 +24,7 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        $schedule->command('db:update-university-when-cache-expired')->everyMinute();
+
     }
 
     /**
