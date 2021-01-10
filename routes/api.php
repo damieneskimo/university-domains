@@ -16,5 +16,5 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::group(['middleware' => ['api']], function () {
-    Route::get('universities', [UniversityController::class, 'index']);
+    Route::get('universities', [UniversityController::class, 'search']);
 });

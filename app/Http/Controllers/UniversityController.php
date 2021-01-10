@@ -8,8 +8,20 @@ use Illuminate\Http\Request;
 
 class UniversityController extends Controller
 {
-    public function index(Request $request)
+    public function search(Request $request)
     {
+        if ($request->filled(['name', 'country'])) {
+            $university = University::where('country', $request->country)->where('name', $request->name)->first();
+
+            if (! is_null($university)) {
+                return $university;
+            } else {
+                return response()->json([
+                    'message' => 'Sorry! University not found!'
+                ], 500);
+            }
+        }
+
         if ($request->filled('country')) {
             $universities = University::where('country', $request->country)->get();
 
@@ -20,19 +32,25 @@ class UniversityController extends Controller
                     $res = $client->request('get', $uri);
                     $data = json_decode($res->getBody()->getContents());
 
-                    foreach ($data as $university) {
-                        University::updateOrCreate(
-                            ['country' => $university->country, 'name' => $university->name],
-                            [
-                                'alpha_two_code' => $university->alpha_two_code,
-                                'state_province' => $university->{'state-province'},
-                                'domains' => $university->domains,
-                                'ttl' => rand(5, 15)
-                            ]
-                        );
-                    }
+                    if (! empty($data)) {
+                        foreach ($data as $university) {
+                            University::updateOrCreate(
+                                ['country' => $university->country, 'name' => $university->name],
+                                [
+                                    'alpha_two_code' => $university->alpha_two_code,
+                                    'state_province' => $university->{'state-province'},
+                                    'domains' => $university->domains,
+                                    'ttl' => rand(5, 15)
+                                ]
+                            );
+                        }
 
-                    $universities = $data;
+                        $universities = $data;
+                    } else {
+                        return response()->json([
+                            'message' => 'Whoops! Something went wrong when retrieving data!'
+                        ], 500);
+                    }
                 } catch (\Throwable $th) {
                     return response()->json([
                         'message' => 'Whoops! Something went wrong when retrieving data!'
