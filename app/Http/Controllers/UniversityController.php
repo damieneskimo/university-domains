@@ -34,7 +34,7 @@ class UniversityController extends Controller
                             );
                         }
 
-                        $universities = $data;
+                        $universities = University::where('country', $request->country)->get();
                     } else {
                         return response()->json([
                             'message' => 'Whoops! Something went wrong when retrieving data!'

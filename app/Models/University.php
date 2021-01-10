@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Jobs\UpdateUniversityCache;
 use App\Models\UniversityDomain;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -9,6 +10,24 @@ use Illuminate\Database\Eloquent\Model;
 class University extends Model
 {
     use HasFactory;
+
+    /**
+     * The "booted" method of the model.
+     *
+     * @return void
+     */
+    public static function booted()
+    {
+        static::created(function ($university) {
+            UpdateUniversityCache::dispatch($university)
+                                ->delay(now()->addMinutes($university->ttl));
+        });
+
+        static::updated(function ($university) {
+            UpdateUniversityCache::dispatch($university)
+                                ->delay(now()->addMinutes($university->ttl));
+        });
+    }
 
     const SOURCE_API = 'http://universities.hipolabs.com/search?';
 

@@ -1,42 +1,48 @@
 <?php
 
-namespace App\Listeners;
+namespace App\Jobs;
 
-use App\Events\UniversityCacheExpired;
 use App\Models\University;
 use GuzzleHttp\Client;
+use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Queue\SerializesModels;
 
-class UpdateUniversityRecord implements ShouldQueue
+class UpdateUniversityCache implements ShouldQueue
 {
+    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+
+    protected $university;
+
     /**
-     * Create the event listener.
+     * Create a new job instance.
      *
      * @return void
      */
-    public function __construct()
+    public function __construct(University $university)
     {
-        //
+        $this->university = $university;
     }
 
     /**
-     * Handle the event.
+     * Execute the job.
      *
-     * @param  \App\Events\UniversityCacheExpired  $event
      * @return void
      */
-    public function handle(UniversityCacheExpired $event)
+    public function handle()
     {
         try {
             $client = new Client;
-            $uri = University::SOURCE_API . 'name=' . $event->university->name . '&country=' . $event->university->country;
+            $uri = University::SOURCE_API . 'name=' . $this->university->name . '&country=' . $this->university->country;
             $res = $client->request('get', $uri);
             $data = json_decode($res->getBody()->getContents());
 
             if (is_array($data) && ! empty($data)) {
                 $record = $data[0];
-                $event->university->update([
+                $this->university->update([
                     'alpha_two_code' => $record->alpha_two_code,
                     'country' => $record->country,
                     'state_province' => $record->{'state-province'},
@@ -46,7 +52,7 @@ class UpdateUniversityRecord implements ShouldQueue
                 ]);
             } else {
                 // remove from local database if record not exists any more in source api data
-                $event->university->delete();
+                $this->university->delete();
             }
         } catch (\Throwable $th) {
             return response()->json([
