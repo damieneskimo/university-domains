@@ -11,18 +11,19 @@ class UniversityController extends Controller
 {
     public function index(Request $request)
     {
+        $country = $request->country;
+
         if ($request->filled('country')) {
-            $universities = University::where('country', $request->country)->get();
+            $universities = University::where('country', $country)->get();
 
             if ($universities->isEmpty()) {
                 try {
-                    $client = new Client;
-                    $uri = University::SOURCE_API . 'country=' . $request->country;
-                    $res = $client->request('get', $uri);
-                    $data = json_decode($res->getBody()->getContents());
+                    $data = University::getUniversitiesByCountryFromAPI($country);
 
-                    if (! empty($data)) {
-                        foreach ($data as $university) {
+                    $data = json_decode($data);
+
+                    if (! empty($universitiesFromAPI)) {
+                        foreach ($universitiesFromAPI as $university) {
                             University::updateOrCreate(
                                 ['country' => $university->country, 'name' => $university->name],
                                 [
@@ -34,7 +35,7 @@ class UniversityController extends Controller
                             );
                         }
 
-                        $universities = University::where('country', $request->country)->get();
+                        $universities = University::where('country', $country)->get();
                     } else {
                         return response()->json([
                             'message' => 'Whoops! Something went wrong when retrieving data!'
