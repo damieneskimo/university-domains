@@ -17,9 +17,9 @@ class UniversityController extends Controller
             $universities = University::where('country', $country)->get();
 
             if ($universities->isEmpty()) {
+                //if universities in this country is not cached in local db, then request from api and cache to db
                 try {
                     $data = University::getUniversitiesByCountryFromAPI($country);
-
                     $data = json_decode($data);
 
                     if (! empty($universitiesFromAPI)) {
