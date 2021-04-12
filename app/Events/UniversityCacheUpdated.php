@@ -11,7 +11,7 @@ use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
-class UniversityCacheExpired implements ShouldBroadcast
+class UniversityCacheUpdated implements ShouldBroadcast
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
@@ -29,7 +29,7 @@ class UniversityCacheExpired implements ShouldBroadcast
 
     public function broadcastAs()
     {
-        return 'UniversityCacheExpired';
+        return 'UniversityCacheUpdated';
     }
 
     /**
