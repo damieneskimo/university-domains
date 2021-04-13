@@ -18,7 +18,14 @@ sudo nano /etc/hosts
 192.168.10.10 uni.test
 ```
 
-3. Start the WebSocket server. For more details, please see Laravel WebSockets doc: https://beyondco.de/docs/laravel-websockets/getting-started/introduction
+3. Start Laravel queue worker to process jobs. https://laravel.com/docs/8.x/queues#running-the-queue-worker
+```
+php artisan queue:work
+```
+
+4. Start the WebSocket server. For more details, please see Laravel WebSockets doc: https://beyondco.de/docs/laravel-websockets/getting-started/introduction
 ```
 php artisan websockets:serve
 ```
+
+> Note:: In your local development, you can achieve running multiple processes by opening multiple termial tabs. In production, you can use a process manager daemon like Supervisor (https://laravel.com/docs/8.x/queues#supervisor-configuration)
