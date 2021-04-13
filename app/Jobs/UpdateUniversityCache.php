@@ -58,7 +58,5 @@ class UpdateUniversityCache implements ShouldQueue
             // then broadcast the delete event to the UI
             UniversityCacheDeleted::dispatch($originalId);
         }
-
-
     }
 }
