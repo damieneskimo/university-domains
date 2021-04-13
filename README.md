@@ -1,6 +1,6 @@
 ## Brief
-This project uses Laravel(8.12) to build API to retrieve a list of universities with their domains for a particular country and a single university record. The data is from Hipo University Domains and Names API. You can take a closer look at its github repo: https://github.com/Hipo/university-domains-list. <br />
-The results from Hipo API are cached in the local database with each record set to random TTL(Time To Live) from 5 to 15 minutes. After the TTL expires, the UpdateUniversityCache job will be dispatched and if the data record has been updated or deleted in the Hipo API, then the record will be updated or deleted from local database as well. UniversityCacheDeleted or UniversityCacheUpdated event will also be broadcast to the frontend accordingly. <br />
+This project uses Laravel(8.12) to build API to retrieve a list of universities with their domains for a particular country and a single university record. The data is from Hipo University Domains and Names API. You can take a closer look at its github repo: https://github.com/Hipo/university-domains-list. <br /><br />
+The results from Hipo API are cached in the local database with each record set to random TTL(Time To Live) from 5 to 15 minutes. After the TTL expires, the UpdateUniversityCache job will be dispatched and if the data record has been updated or deleted in the Hipo API, then the record will be updated or deleted from local database as well. UniversityCacheDeleted or UniversityCacheUpdated event will also be broadcast to the frontend accordingly. <br /><br />
 For the Broadcasting, this project uses Laravel WebSockets (https://github.com/beyondcode/laravel-websockets). To receive the events and update UI in real time, please use its sibling frontend Vue SPA project (https://github.com/damieneskimo/university-domains-vue-spa).
 
 ## Project Setup
@@ -9,7 +9,7 @@ For the Broadcasting, this project uses Laravel WebSockets (https://github.com/b
 composer install
 php artisan migrate
 ```
-Note: Since this project uses model event created/updated to dispatch delayed UpdateUniversityCache job to update a single record when TTL expired. Due to this, please make sure NOT to use sync as the queue driver. Otherwise, it will be super slow when getting data
+> Note: Since this project uses model event created/updated to dispatch delayed UpdateUniversityCache job to update a single record when TTL expired, please make sure <strong>NOT</strong> to use sync as the queue driver. Otherwise, it will be super slow when getting data
 
 2. Please change you local hosts to uni.test, since the frontend project is using this domain name. Or you can change it as you need.
 Example as below:
